@@ -17,6 +17,9 @@ class GameScene extends Phaser.Scene{
     this.target
     this.points = 0
     this.textScore
+    this.textTime
+    this.timedEvent
+    this.remainingTime
   }
   preload(){
     this.load.image("bg","/assets/bg.png")
@@ -29,7 +32,6 @@ class GameScene extends Phaser.Scene{
     this.player.setImmovable(true)
     this.player.body.allowGravity = false
     this.player.setCollideWorldBounds(true)
-    // this.player.setSize(80,15).setOffset(10,70)
     this.player.setSize(this.player.width-this.player.width/4, this.player.height/6).setOffset(this.player.width/10, this.player.height-this.player.height/10)
 
     this.target = this.physics.add.image(0, 0, "apple").setOrigin(0,0)
@@ -43,8 +45,16 @@ class GameScene extends Phaser.Scene{
       font: "25px Arial",
       fill:"#000000"
     })
+    this.textTime = this.add.text(10, 10, "Remaining Time: 0",{
+      font: "25px Arial",
+      fill:"#000000"
+    })
+    this.timedEvent = this.time.delayedCall(3000, this.gameOver,[],this)
   }
   update(){
+    this.remainingTime=this.timedEvent.getRemainingSeconds()
+    this.textTime.setText(`Remaining Time: ${Math.round(this.remainingTime).toString}`)
+
     if (this.target.y >= sizes.height) {
       this.target.setY(0)
       this.target.setX(this.getRandomX())
@@ -69,6 +79,10 @@ class GameScene extends Phaser.Scene{
     this.target.setX(this.getRandomX())
     this.points++
     this.textScore.setText(`Score: ${this.points}`)
+  }
+
+  gameOver() {
+    console.log("Game Over")
   }
 }
 
