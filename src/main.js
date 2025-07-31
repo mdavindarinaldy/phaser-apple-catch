@@ -8,6 +8,13 @@ const sizes={
 
 const speedDown = 300
 
+const gameCanvas = document.querySelector("#gameCanvas")
+const gameStartDiv = document.querySelector("#gameStartDiv")
+const gameStartBtn = document.querySelector("#gameStartBtn")
+const gameEndDiv = document.querySelector("#gameEndDiv")
+const gameWinLoseSpan = document.querySelector("#gameWinLoseSpan")
+const gameEndScoreSpan = document.querySelector("#gameEndScoreSpan")
+
 class GameScene extends Phaser.Scene{
   constructor(){
     super("scene-game")
@@ -33,9 +40,10 @@ class GameScene extends Phaser.Scene{
     this.load.audio("bgMusic","/assets/bgMusic.mp3")
   }
   create(){
+    this.scene.pause("scene-game")
+
     this.coinMusic = this.sound.add("coin")
     this.bgMusic = this.sound.add("bgMusic")
-    this.bgMusic.play()
 
     this.add.image(0,0,"bg").setOrigin(0,0)
     this.player = this.physics.add.image(0,sizes.height-100,"basket").setOrigin(0,0)
@@ -103,7 +111,18 @@ class GameScene extends Phaser.Scene{
   }
 
   gameOver() {
-    console.log("Game Over")
+    this.sys.game.destroy(true)
+
+    if(this.points >=10){
+      gameEndScoreSpan.textContent = this.points
+      gameWinLoseSpan.textContent= "Win! 😊"
+
+    }else{
+      gameEndScoreSpan.textContent = this.points
+      gameWinLoseSpan.textContent= "Lose! 😭"
+    }
+
+    gameEndDiv.style.display="flex"
   }
 }
 
@@ -124,3 +143,9 @@ const config = {
 
 const game = new Phaser.Game(config)
 
+gameStartBtn.addEventListener("click", ()=>{
+  gameStartDiv.style.display="none"
+  gameCanvas.style.display="flex"
+  game.scene.resume("scene-game")
+  game.sound.play("bgMusic")
+})
